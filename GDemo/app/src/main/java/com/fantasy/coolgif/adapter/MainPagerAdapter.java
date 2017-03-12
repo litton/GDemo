@@ -14,6 +14,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fantasy.coolgif.R;
 import com.fantasy.coolgif.main.MainApplication;
 import com.fantasy.coolgif.response.GifItem;
+import com.fantasy.coolgif.utils.LogUtil;
 import com.fantasy.coolgif.widget.GIfSingleView;
 
 import java.util.ArrayList;
@@ -49,6 +50,12 @@ public class MainPagerAdapter extends PagerAdapter {
 
     @Override
     public void destroyItem(View container, int position, Object object) {
+        LogUtil.v("fan","destoryItem:" + object + ":" + position);
+
+        GIfSingleView view = (GIfSingleView)object;
+        if(view != null) {
+            view.clearGlide();
+        }
         ((ViewPager) container).removeView(viewContainter.get(position));
 
     }

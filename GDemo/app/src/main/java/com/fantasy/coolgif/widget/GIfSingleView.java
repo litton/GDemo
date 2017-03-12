@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.text.TextUtilsCompat;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Surface;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -66,37 +67,57 @@ public class GIfSingleView extends LinearLayout {
     }
 
     private GifItem gifItem;
+    private SimpleTarget<Bitmap> simpleTarget;
+
+
+    public void clearGlide() {
+        LogUtil.v("fan",gifItem.gif_title + ": clean glide ...." );
+        if(simpleTarget != null) {
+            Glide.clear(simpleTarget);
+        }
+        Glide.clear(mGifImageView);
+    }
 
     public void setGifItem(GifItem item) {
         this.gifItem = item;
-        if(TextUtils.isEmpty(item.gif_title)) {
+        if (TextUtils.isEmpty(item.gif_title)) {
             mGifTitle.setVisibility(View.GONE);
         } else {
             mGifTitle.setVisibility(View.VISIBLE);
             mGifTitle.setText(item.gif_title);
         }
-        LogUtil.v("fan","stGifItem:" + gifItem.gif_url);
-        imageLoader.load(gifItem.gif_url).asBitmap().
-                diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
+        LogUtil.v("fan", "stGifItem:" + gifItem.gif_url);
+        simpleTarget = new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
                 if (resource != null) {
                     try {
                         mGifImageView.setBackground(new BitmapDrawable(BlurFactory.getDefault().blur(resource)));
                     } catch (OutOfMemoryError error) {
+                        LogUtil.v("fan", "setGifItemOutOfMemroyError:" + error);
                         System.gc();
                         System.gc();
                         System.gc();
                     }
                 }
-
             }
-        });
+        };
+        imageLoader.load(gifItem.gif_url).asBitmap().
+                diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.1f).into(simpleTarget);
     }
 
     public void startGifAnimation() {
-        if (gifItem != null) {
-            imageLoader.load(gifItem.gif_url).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(mGifImageView);
+
+        try {
+            if (gifItem != null) {
+                LogUtil.v("fan", "startGifAnimation." + gifItem.gif_url);
+                imageLoader.load(gifItem.gif_url).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(mGifImageView);
+            }
+        } catch (OutOfMemoryError error) {
+            LogUtil.v("fan", "startGifAnimation:outofMemoryError");
+            System.gc();
+            System.gc();
+            System.gc();
         }
     }
 

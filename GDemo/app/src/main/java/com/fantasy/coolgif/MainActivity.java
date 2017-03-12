@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements INetworkCallback 
 
 
         mGifPager = (ViewPager) findViewById(R.id.list);
-        mGifPager.setOffscreenPageLimit(1);
+        mGifPager.setOffscreenPageLimit(2);
         mGifPager.setPageMargin(DimensUtil.dip2px(5));
         mGifPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
