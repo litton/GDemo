@@ -5,7 +5,10 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
+import android.support.v4.text.TextUtilsCompat;
+import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,13 +69,25 @@ public class GIfSingleView extends LinearLayout {
 
     public void setGifItem(GifItem item) {
         this.gifItem = item;
-        mGifTitle.setText(item.gif_title);
+        if(TextUtils.isEmpty(item.gif_title)) {
+            mGifTitle.setVisibility(View.GONE);
+        } else {
+            mGifTitle.setVisibility(View.VISIBLE);
+            mGifTitle.setText(item.gif_title);
+        }
+        LogUtil.v("fan","stGifItem:" + gifItem.gif_url);
         imageLoader.load(gifItem.gif_url).asBitmap().
                 diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
-                if(resource != null) {
-                    mGifImageView.setBackground(new BitmapDrawable(BlurFactory.getDefault().blur(resource)));
+                if (resource != null) {
+                    try {
+                        mGifImageView.setBackground(new BitmapDrawable(BlurFactory.getDefault().blur(resource)));
+                    } catch (OutOfMemoryError error) {
+                        System.gc();
+                        System.gc();
+                        System.gc();
+                    }
                 }
 
             }

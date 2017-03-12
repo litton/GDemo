@@ -72,16 +72,23 @@ public final class BlurFactory {
      * @return
      */
     public Bitmap blur2(Bitmap bkg) {
-        Bitmap overlay =
-                Bitmap.createBitmap((int) (bkg.getWidth() * SCALE_FACTOR), (int) (bkg.getHeight() * SCALE_FACTOR),
-                        Bitmap.Config.ARGB_8888);
-        Canvas canvas = new Canvas(overlay);
-        canvas.scale(SCALE_FACTOR, SCALE_FACTOR);
-        Paint paint = new Paint();
-        paint.setFlags(Paint.FILTER_BITMAP_FLAG);
-        canvas.drawBitmap(bkg, 0, 0, paint);
-        overlay = FastBlur.doBlur(overlay, BLUR_RADIUS, true);
-        return overlay;
+        try {
+
+            Bitmap overlay =
+                    Bitmap.createBitmap((int) (bkg.getWidth() * SCALE_FACTOR), (int) (bkg.getHeight() * SCALE_FACTOR),
+                            Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(overlay);
+            canvas.scale(SCALE_FACTOR, SCALE_FACTOR);
+            Paint paint = new Paint();
+            paint.setFlags(Paint.FILTER_BITMAP_FLAG);
+            canvas.drawBitmap(bkg, 0, 0, paint);
+            overlay = FastBlur.doBlur(overlay, BLUR_RADIUS, true);
+            return overlay;
+        } catch (OutOfMemoryError error) {
+            System.gc();
+            System.gc();
+        }
+        return bkg;
     }
 
     @TargetApi(17)

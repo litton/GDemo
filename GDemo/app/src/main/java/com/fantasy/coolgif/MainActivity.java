@@ -1,20 +1,29 @@
 package com.fantasy.coolgif;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 
+import com.bumptech.glide.Glide;
 import com.fantasy.coolgif.adapter.MainPagerAdapter;
 import com.fantasy.coolgif.network.INetworkCallback;
 import com.fantasy.coolgif.network.NetworkBus;
 import com.fantasy.coolgif.response.GifItem;
 import com.fantasy.coolgif.response.GifResponse;
 import com.fantasy.coolgif.utils.DimensUtil;
+import com.fantasy.coolgif.utils.LogUtil;
+import com.fantasy.coolgif.utils.Utils;
 import com.fantasy.coolgif.widget.GIfSingleView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.schedulers.Schedulers;
+
 
 public class MainActivity extends AppCompatActivity implements INetworkCallback {
 
@@ -28,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements INetworkCallback 
         setContentView(R.layout.activity_main);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
+
         NetworkBus.getDefault().getTopGifList(this);
 
 
@@ -43,7 +53,9 @@ public class MainActivity extends AppCompatActivity implements INetworkCallback 
             @Override
             public void onPageSelected(int position) {
                 GIfSingleView gIfSingleView = (GIfSingleView) mGifPager.findViewWithTag(position);
-                gIfSingleView.startGifAnimation();
+                if (gIfSingleView != null) {
+                    gIfSingleView.startGifAnimation();
+                }
             }
 
             @Override
@@ -64,6 +76,51 @@ public class MainActivity extends AppCompatActivity implements INetworkCallback 
             mAdapter = new MainPagerAdapter(response.data);
             mGifPager.setAdapter(mAdapter);
         }
+    }
 
+    /**
+     * 清除内存缓存
+     *
+     * @param context
+     */
+    public void clearMemoryCache(Context context) {
+        Glide.get(context).clearMemory();
+    }
+
+    /**
+     * 清除磁盘缓存
+     *
+     * @param context
+     */
+    public void clearDiskCache(Context context) {
+        Glide.get(context).clearDiskCache();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+
+//        Observable.defer(new Callable<ObservableSource<?>>() {
+//            @Override
+//            public ObservableSource<?> call() throws Exception {
+//                LogUtil.v("fan","Ondrastoy:" + Utils.isMainThread());
+//                clearMemoryCache(MainActivity.this);
+//                clearDiskCache(MainActivity.this);
+//                return null;
+//            }
+//        });
+
+        LogUtil.v("fan","onDestory");
+        clearMemoryCache(MainActivity.this);
+        Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
+
+                //clearDiskCache(MainActivity.this);
+            }
+        }).subscribeOn(Schedulers.io()).subscribe();
+
+
+        super.onDestroy();
     }
 }
