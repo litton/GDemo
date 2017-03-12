@@ -33,6 +33,15 @@
                     android:layout_height="220dip"
                     android:scaleType="center" />
 
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/full_screen"
+                    android:layout_gravity="right|bottom"
+                    android:layout_marginRight="10dip"
+                    android:layout_marginBottom="10dip"
+                    />
+
             </FrameLayout>
 
 
@@ -47,9 +56,33 @@
                 android:textColor="#000000"
                 android:fontFamily="sans-serif"
                 android:textSize="15dip"
+                />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dip">
 
+            <ImageView
+                android:id="@+id/like"
+                android:layout_width="18dip"
+                android:layout_height="18dip"
+                android:layout_centerVertical="true"
+                android:scaleType="centerInside"
+                android:layout_marginLeft="20dip"
+                android:src="@drawable/like"
                 />
 
+
+            <ImageView
+                android:layout_toRightOf="@id/like"
+                android:scaleType="centerInside"
+                android:layout_width="18dip"
+                android:layout_height="18dip"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="20dip"
+                android:src="@drawable/heart"
+                />
+
+        </RelativeLayout>
 
         </LinearLayout>
 
