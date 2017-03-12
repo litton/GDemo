@@ -63,6 +63,9 @@ public class MainPagerAdapter extends PagerAdapter {
         GIfSingleView view = (GIfSingleView) LayoutInflater.from(MainApplication.getInstance().getApplicationContext()).inflate(R.layout.gif_item, null);
         view.setTag(position);
         view.setGifItem(imageInfo);
+        if (position == 0) {
+            view.startGifAnimation();
+        }
         ((ViewPager) container).addView(view);
         viewContainter.add(view);
         return view;

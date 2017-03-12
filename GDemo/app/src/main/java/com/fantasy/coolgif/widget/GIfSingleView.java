@@ -1,6 +1,9 @@
 package com.fantasy.coolgif.widget;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
@@ -10,7 +13,14 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.Request;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
 import com.fantasy.coolgif.R;
+import com.fantasy.coolgif.blur.BlurFactory;
+import com.fantasy.coolgif.blur.FastBlur;
 import com.fantasy.coolgif.main.MainApplication;
 import com.fantasy.coolgif.response.GifItem;
 import com.fantasy.coolgif.utils.LogUtil;
@@ -57,13 +67,21 @@ public class GIfSingleView extends LinearLayout {
     public void setGifItem(GifItem item) {
         this.gifItem = item;
         mGifTitle.setText(item.gif_title);
+        imageLoader.load(gifItem.gif_url).asBitmap().
+                diskCacheStrategy(DiskCacheStrategy.ALL).into(new SimpleTarget<Bitmap>() {
+            @Override
+            public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
+                if(resource != null) {
+                    mGifImageView.setBackground(new BitmapDrawable(BlurFactory.getDefault().blur(resource)));
+                }
+
+            }
+        });
     }
 
     public void startGifAnimation() {
-        LogUtil.v("fan", "startGifAnimation:");
         if (gifItem != null) {
-            imageLoader.load(gifItem.gif_url).asGif().
-                    diskCacheStrategy(DiskCacheStrategy.SOURCE).into(mGifImageView);
+            imageLoader.load(gifItem.gif_url).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(mGifImageView);
         }
     }
 
