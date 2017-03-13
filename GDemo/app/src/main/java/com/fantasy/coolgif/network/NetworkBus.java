@@ -28,7 +28,7 @@ public class NetworkBus {
         if (NetWorkUtil.isOffice()) {
             HOST_NAME = "http://cp01-rdqa-dev366.cp01.baidu.com";
         } else {
-            HOST_NAME = "http://192.168.2.102";
+            HOST_NAME = "http://172.24.112.148";
         }
 
     }

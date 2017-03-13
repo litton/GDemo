@@ -100,16 +100,6 @@ public class MainActivity extends AppCompatActivity implements INetworkCallback 
     protected void onDestroy() {
 
 
-//        Observable.defer(new Callable<ObservableSource<?>>() {
-//            @Override
-//            public ObservableSource<?> call() throws Exception {
-//                LogUtil.v("fan","Ondrastoy:" + Utils.isMainThread());
-//                clearMemoryCache(MainActivity.this);
-//                clearDiskCache(MainActivity.this);
-//                return null;
-//            }
-//        });
-
         LogUtil.v("fan","onDestory");
         clearMemoryCache(MainActivity.this);
         Observable.create(new ObservableOnSubscribe<String>() {
