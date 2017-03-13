@@ -13,6 +13,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.fastjson.FastJsonConverterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 /**
  * Created by fanlitao on 17/3/9.
@@ -28,7 +29,7 @@ public class NetworkBus {
         if (NetWorkUtil.isOffice()) {
             HOST_NAME = "http://cp01-rdqa-dev366.cp01.baidu.com";
         } else {
-            HOST_NAME = "http://172.24.112.148";
+            HOST_NAME = "http://192.168.2.105";
         }
 
     }
@@ -109,7 +110,30 @@ public class NetworkBus {
 
             @Override
             public void onFailure(Call<GifResponse> call, Throwable t) {
-                Log.v("fan", "onFailure" + call);
+                Log.v("fan", "onFailure" + call.toString());
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public void deleteGifUrl(final String url,final INetworkCallback callback) {
+        final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
+        final Call<GifResponse> call = repo.deleteGifUrl(url);
+        call.enqueue(new Callback<GifResponse>() {
+            @Override
+            public void onResponse(Call<GifResponse> call, Response<GifResponse> response) {
+                Log.v("fan", "onResponse:" + response);
+                if (response.isSuccessful()) {
+                    if(callback != null) {
+                        callback.onDeleteCompeletd(url);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GifResponse> call, Throwable t) {
+                Log.v("fan", "onFailure" + call.toString());
+                t.printStackTrace();
             }
         });
     }
@@ -122,6 +146,10 @@ public class NetworkBus {
         //Call<ResponseBody> getImageList(@Path("category_id") String categoryId, @Path("json_id") String jsonId);
         @GET("gif_main.json")
         Call<GifResponse> getTopGifList();
+
+        @GET("delete")
+        Call<GifResponse> deleteGifUrl(@Query("url") String gifUrl);
+
 
     }
 

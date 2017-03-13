@@ -78,6 +78,11 @@ public class MainActivity extends AppCompatActivity implements INetworkCallback 
         }
     }
 
+    @Override
+    public void onDeleteCompeletd(String gifUrl) {
+
+    }
+
     /**
      * 清除内存缓存
      *

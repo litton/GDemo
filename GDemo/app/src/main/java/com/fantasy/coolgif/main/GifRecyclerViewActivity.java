@@ -101,6 +101,11 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
         }
     }
 
+    @Override
+    public void onDeleteCompeletd(String gifUrl) {
+
+    }
+
     /**
      * 清除内存缓存
      *

@@ -10,4 +10,5 @@ public interface INetworkCallback {
 
 
     public void onResponse(GifResponse response);
+    public void onDeleteCompeletd(String gifUrl);
 }

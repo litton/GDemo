@@ -18,8 +18,11 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.fantasy.coolgif.blur.BlurFactory;
 import com.fantasy.coolgif.main.MainApplication;
+import com.fantasy.coolgif.network.INetworkCallback;
+import com.fantasy.coolgif.network.NetworkBus;
 import com.fantasy.coolgif.response.GifItem;
 import com.fantasy.coolgif.R;
+import com.fantasy.coolgif.response.GifResponse;
 import com.fantasy.coolgif.utils.LogUtil;
 
 import java.util.List;
@@ -53,7 +56,7 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
 
     @Override
     public void onBindViewHolder(final GifItemViewHolder holder, int position) {
-        GifItem item = mDataList.get(position);
+        final GifItem item = mDataList.get(position);
         holder.singleView.setTag(position);
         holder.singleView.resetForRecycler();
         holder.singleView.setGifItem(item);
@@ -81,6 +84,27 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
             @Override
             public void onClick(View v) {
                 holder.mHeartImageView.setSelected(true);
+            }
+        });
+
+        holder.mSharedImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                NetworkBus.getDefault().deleteGifUrl(item.gif_url, new INetworkCallback() {
+                    @Override
+                    public void onResponse(GifResponse response) {
+
+                    }
+
+                    @Override
+                    public void onDeleteCompeletd(String gifUrl) {
+                        GifItem item = new GifItem();
+                        item.gif_url = gifUrl;
+                        boolean result = mDataList.remove(item);
+                        LogUtil.v("fan","delete:" + result + ":" + gifUrl);
+                        notifyDataSetChanged();
+                    }
+                });
             }
         });
     }
