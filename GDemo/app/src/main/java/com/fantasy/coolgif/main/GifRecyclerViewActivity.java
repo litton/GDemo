@@ -53,7 +53,10 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
                 switch (newState) {
                     case RecyclerView.SCROLL_STATE_IDLE:
                         GIfSingleView view = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition);
-                        view.startGifAnimation();
+                        if (view != null) {
+                            view.startGifAnimation();
+                        }
+
                         GIfSingleView view2 = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition + 1);
                         if (view2 != null) {
                             view2.startGifAnimation();
@@ -72,7 +75,10 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
                 mFirstVisiableItemPosition = mLayoutManager.findFirstVisibleItemPosition();
                 if (mFirstVisiableItemPosition == 0 && mGifPager.getChildAt(0).getTop() == 0) {
                     GIfSingleView view = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition);
-                    view.startGifAnimation();
+                    if (view != null) {
+                        view.startGifAnimation();
+                    }
+
                     GIfSingleView view2 = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition + 1);
                     if (view2 != null) {
                         view2.startGifAnimation();
