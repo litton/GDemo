@@ -122,6 +122,8 @@ public class NetworkBus {
     }
 
     public void getTopGifList(int pos, final INetworkCallback callback) {
+
+        
         final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
 
         final Call<GifResponse> call = repo.getTopGifList(pos);
