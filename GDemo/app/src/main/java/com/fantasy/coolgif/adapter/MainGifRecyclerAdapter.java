@@ -96,13 +96,14 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
             @Override
             public void onClick(View v) {
                 if (!holder.mLikeImageView.isSelected()) {
-
                     holder.mLikeImageView.setSelected(true);
                     NetworkBus.getDefault().likeGifById(item.id, new NetworkBus.ILikeGifCallback() {
                         @Override
                         public void onSucessful(LikeResponse response) {
                             LogUtil.v("fan", "like.:" + response.id + ":" + response.like_info);
                             holder.mLikeCountTv.setText(String.valueOf(response.like_info));
+                            holder.mLikeCountTv.setVisibility(View.VISIBLE);
+                            item.like_info = response.like_info;
                         }
                     });
                 }

@@ -76,7 +76,7 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
                         int visibleItemCount = layoutManager.getChildCount();
                         int totalItemCount = layoutManager.getItemCount();
                         if (!mWaitingResponse && (visibleItemCount > 0 && (mLastVisiableItemPosition) >= totalItemCount - PRE_REQUERY_COUNT)) {
-                            NetworkBus.getDefault().getTopGifList(totalItemCount - 1, GifRecyclerViewActivity.this);
+                            NetworkBus.getDefault().getTopGifList(totalItemCount + mInitRequestPosition, GifRecyclerViewActivity.this);
                         }
                         break;
                 }

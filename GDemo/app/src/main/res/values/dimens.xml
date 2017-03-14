@@ -1,4 +1,4 @@
 <resources>
     <dimen name="fab_margin">16dp</dimen>
-    <dimen name="gif_height">180dip</dimen>
+    <dimen name="gif_height">195dip</dimen>
 </resources>
