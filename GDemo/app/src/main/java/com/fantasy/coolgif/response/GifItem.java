@@ -6,8 +6,10 @@ package com.fantasy.coolgif.response;
 
 public class GifItem {
 
+    public int id;
     public String gif_title;
     public String gif_url;
+    public int like_info;
 
     @Override
     public boolean equals(Object o) {
@@ -16,7 +18,7 @@ public class GifItem {
 
         GifItem gifItem = (GifItem) o;
 
-        return gif_url != null ? gif_url.equals(gifItem.gif_url) : gifItem.gif_url == null;
+        return id == gifItem.id;
 
     }
 

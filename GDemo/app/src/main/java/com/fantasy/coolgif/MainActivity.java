@@ -79,7 +79,13 @@ public class MainActivity extends AppCompatActivity implements INetworkCallback 
     }
 
     @Override
-    public void onDeleteCompeletd(String gifUrl) {
+    public void onDeleteCompeletd(int gifId) {
+
+    }
+
+
+    @Override
+    public void onFailed() {
 
     }
 

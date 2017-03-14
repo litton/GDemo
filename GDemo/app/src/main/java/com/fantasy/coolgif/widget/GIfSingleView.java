@@ -112,7 +112,6 @@ public class GIfSingleView extends LinearLayout {
             mGifTitle.setVisibility(View.VISIBLE);
             mGifTitle.setText(item.gif_title);
         }
-        LogUtil.v("fan", "stGifItem:" + gifItem.gif_url);
         simpleTarget = new SimpleTarget<Bitmap>() {
             @Override
             public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -120,7 +119,6 @@ public class GIfSingleView extends LinearLayout {
                     try {
                         mGifImageView.setBackground(new BitmapDrawable(BlurFactory.getDefault().blur(resource)));
                     } catch (OutOfMemoryError error) {
-                        LogUtil.v("fan", "setGifItemOutOfMemroyError:" + error);
                         System.gc();
                         System.gc();
                         System.gc();

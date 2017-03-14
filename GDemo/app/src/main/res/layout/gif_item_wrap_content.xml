@@ -90,7 +90,6 @@
                     android:textColor="#B9B9B9"
                     android:fontFamily="sans-serif"
                     android:textSize="15dip"
-                    android:text="10"
                     android:id="@+id/like_count"
                     />
 

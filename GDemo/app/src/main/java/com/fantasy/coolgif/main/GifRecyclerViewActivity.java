@@ -13,6 +13,7 @@ import com.fantasy.coolgif.network.NetworkBus;
 import com.fantasy.coolgif.response.GifResponse;
 import com.fantasy.coolgif.utils.LogUtil;
 import com.fantasy.coolgif.R;
+import com.fantasy.coolgif.utils.PreferenceUtil;
 import com.fantasy.coolgif.widget.GIfSingleView;
 
 import io.reactivex.Observable;
@@ -29,6 +30,12 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
     private LinearLayoutManager mLayoutManager;
 
     private int mFirstVisiableItemPosition;
+    private int mLastVisiableItemPosition;
+    public static final int PRE_REQUERY_COUNT = 3;
+
+    private boolean mWaitingResponse = false;
+
+    private int mInitRequestPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,9 +43,9 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
         setContentView(R.layout.recycler_main);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
-
-        NetworkBus.getDefault().getTopGifList(this);
-
+        mInitRequestPosition = PreferenceUtil.getGifRequestPosition();
+        NetworkBus.getDefault().getTopGifList(mInitRequestPosition, this);
+        mWaitingResponse = true;
 
         mGifPager = (RecyclerView) findViewById(R.id.list);
         mGifPager.setHasFixedSize(true);
@@ -52,11 +59,11 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
                 super.onScrollStateChanged(recyclerView, newState);
                 switch (newState) {
                     case RecyclerView.SCROLL_STATE_IDLE:
+                        PreferenceUtil.saveGifCurrentPos(mInitRequestPosition + mFirstVisiableItemPosition + 1);
                         GIfSingleView view = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition);
                         if (view != null) {
                             view.startGifAnimation();
                         }
-
                         GIfSingleView view2 = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition + 1);
                         if (view2 != null) {
                             view2.startGifAnimation();
@@ -64,6 +71,12 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
                         GIfSingleView view3 = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition + 2);
                         if (view3 != null) {
                             view3.startGifAnimation();
+                        }
+                        RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
+                        int visibleItemCount = layoutManager.getChildCount();
+                        int totalItemCount = layoutManager.getItemCount();
+                        if (!mWaitingResponse && (visibleItemCount > 0 && (mLastVisiableItemPosition) >= totalItemCount - PRE_REQUERY_COUNT)) {
+                            NetworkBus.getDefault().getTopGifList(totalItemCount - 1, GifRecyclerViewActivity.this);
                         }
                         break;
                 }
@@ -73,6 +86,7 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
                 mFirstVisiableItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+                mLastVisiableItemPosition = mLayoutManager.findLastVisibleItemPosition();
                 if (mFirstVisiableItemPosition == 0 && mGifPager.getChildAt(0).getTop() == 0) {
                     GIfSingleView view = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition);
                     if (view != null) {
@@ -94,16 +108,24 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
 
     @Override
     public void onResponse(GifResponse response) {
+        mWaitingResponse = false;
         if (mAdapter == null) {
-            LogUtil.v("fan","onResponse:" + response);
-            mAdapter = new MainGifRecyclerAdapter(mGifPager,response.data);
+            LogUtil.v("fan", "onResponse:" + response);
+            mAdapter = new MainGifRecyclerAdapter(mGifPager, response.data);
             mGifPager.setAdapter(mAdapter);
+        } else {
+            mAdapter.addNewDataList(response.data);
         }
     }
 
     @Override
-    public void onDeleteCompeletd(String gifUrl) {
+    public void onDeleteCompeletd(int gifUrl) {
 
+    }
+
+    @Override
+    public void onFailed() {
+        mWaitingResponse = false;
     }
 
     /**
@@ -128,7 +150,7 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
     protected void onDestroy() {
 
 
-        LogUtil.v("fan", "onDestory");
+        LogUtil.v("fan", "onDestory:" + PreferenceUtil.getGifRequestPosition());
         clearMemoryCache(GifRecyclerViewActivity.this);
         Observable.create(new ObservableOnSubscribe<String>() {
             @Override

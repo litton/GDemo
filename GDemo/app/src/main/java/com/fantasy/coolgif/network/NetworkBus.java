@@ -4,7 +4,7 @@ package com.fantasy.coolgif.network;
 import android.util.Log;
 
 import com.fantasy.coolgif.response.GifResponse;
-import com.fantasy.coolgif.utils.NetWorkUtil;
+import com.fantasy.coolgif.response.LikeResponse;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Call;
@@ -26,11 +26,13 @@ public class NetworkBus {
 
     static {
 
-        if (NetWorkUtil.isOffice()) {
-            HOST_NAME = "http://cp01-rdqa-dev366.cp01.baidu.com";
-        } else {
-            HOST_NAME = "http://192.168.2.105";
-        }
+//        if (NetWorkUtil.isOffice()) {
+//            HOST_NAME = "http://cp01-rdqa-dev366.cp01.baidu.com";
+//        } else {
+//            HOST_NAME = "http://192.168.2.105";
+//        }
+
+        HOST_NAME = "http://www.xiaotk1.com/app/coolgif/";
 
     }
 
@@ -48,7 +50,8 @@ public class NetworkBus {
     private Retrofit mRetrofit;
 
     public void initNetworkBus() {
-        String baseUrl = HOST_NAME + ":8000/gif_api/";
+        //String baseUrl = HOST_NAME + ":8000/gif_api/";
+        String baseUrl = HOST_NAME;
         //获取实例
         mRetrofit = new Retrofit.Builder()
                 //设置OKHttpClient,如果不设置会提供一个默认的
@@ -105,6 +108,8 @@ public class NetworkBus {
                 Log.v("fan", "onResponse:" + response);
                 if (response.isSuccessful()) {
                     callback.onResponse(response.body());
+                } else {
+                    callback.onFailed();
                 }
             }
 
@@ -116,29 +121,77 @@ public class NetworkBus {
         });
     }
 
-    public void deleteGifUrl(final String url,final INetworkCallback callback) {
+    public void getTopGifList(int pos, final INetworkCallback callback) {
         final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
-        final Call<GifResponse> call = repo.deleteGifUrl(url);
+
+        final Call<GifResponse> call = repo.getTopGifList(pos);
         call.enqueue(new Callback<GifResponse>() {
             @Override
             public void onResponse(Call<GifResponse> call, Response<GifResponse> response) {
                 Log.v("fan", "onResponse:" + response);
                 if (response.isSuccessful()) {
-                    if(callback != null) {
-                        callback.onDeleteCompeletd(url);
+                    callback.onResponse(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GifResponse> call, Throwable t) {
+                Log.v("fan", "onFailure" + call.toString());
+                t.printStackTrace();
+                if (callback != null) {
+                    callback.onFailed();
+                }
+            }
+        });
+    }
+
+    public void deleteGifById(final int gifId, final INetworkCallback callback) {
+        final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
+        final Call<GifResponse> call = repo.deleteGifUrl(gifId);
+        call.enqueue(new Callback<GifResponse>() {
+            @Override
+            public void onResponse(Call<GifResponse> call, Response<GifResponse> response) {
+                Log.v("fan", "onResponse:" + response);
+                if (response.isSuccessful()) {
+                    if (callback != null) {
+                        callback.onDeleteCompeletd(gifId);
                     }
                 }
             }
 
             @Override
             public void onFailure(Call<GifResponse> call, Throwable t) {
-                Log.v("fan", "onFailure" + call.toString());
+                Log.v("fan", "onFailure" + call.request().url());
                 t.printStackTrace();
             }
         });
     }
 
+    public void likeGifById(final int gifId, final ILikeGifCallback callback) {
+        final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
+        final Call<LikeResponse> call = repo.likeGifById(gifId);
+        call.enqueue(new Callback<LikeResponse>() {
+            @Override
+            public void onResponse(Call<LikeResponse> call, Response<LikeResponse> response) {
+                Log.v("fan", "onResponse:" + response);
+                if (response.isSuccessful()) {
+                    if (callback != null) {
+                        callback.onSucessful(response.body());
+                    }
+                }
+            }
 
+            @Override
+            public void onFailure(Call<LikeResponse> call, Throwable t) {
+                Log.v("fan", "onFailure" + call.request().url());
+                t.printStackTrace();
+            }
+        });
+    }
+
+    public interface ILikeGifCallback {
+        public void onSucessful(LikeResponse response);
+    }
 
 
     public interface CoolGifAPI {
@@ -147,8 +200,14 @@ public class NetworkBus {
         @GET("gif_main.json")
         Call<GifResponse> getTopGifList();
 
+        @GET("get_gif")
+        Call<GifResponse> getTopGifList(@Query("pos") int pos);
+
         @GET("delete")
-        Call<GifResponse> deleteGifUrl(@Query("url") String gifUrl);
+        Call<GifResponse> deleteGifUrl(@Query("id") int gifId);
+
+        @GET("like")
+        Call<LikeResponse> likeGifById(@Query("id") int gifId);
 
 
     }

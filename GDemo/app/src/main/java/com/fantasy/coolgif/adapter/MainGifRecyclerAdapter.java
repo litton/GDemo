@@ -23,6 +23,7 @@ import com.fantasy.coolgif.network.NetworkBus;
 import com.fantasy.coolgif.response.GifItem;
 import com.fantasy.coolgif.R;
 import com.fantasy.coolgif.response.GifResponse;
+import com.fantasy.coolgif.response.LikeResponse;
 import com.fantasy.coolgif.utils.LogUtil;
 
 import java.util.List;
@@ -38,12 +39,18 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
     private Context mContext;
     private RequestManager imageLoader;
     private RecyclerView mRecyclerView;
-    public MainGifRecyclerAdapter(RecyclerView rv,List<GifItem> data) {
+
+    public MainGifRecyclerAdapter(RecyclerView rv, List<GifItem> data) {
         mDataList = data;
         mContext = MainApplication.getInstance().getApplicationContext();
         imageLoader = Glide.with(MainApplication.getInstance().getApplicationContext());
         mRecyclerView = rv;
+    }
 
+
+    public void addNewDataList(List<GifItem> dataList) {
+        mDataList.addAll(dataList);
+        notifyDataSetChanged();
     }
 
 
@@ -60,15 +67,22 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.singleView.setTag(position);
         holder.singleView.resetForRecycler();
         holder.singleView.setGifItem(item);
+
+        if (item.like_info > 0) {
+            holder.mLikeCountTv.setVisibility(View.VISIBLE);
+            holder.mLikeCountTv.setText(String.valueOf(item.like_info));
+        } else {
+            holder.mLikeCountTv.setVisibility(View.INVISIBLE);
+        }
         holder.mFullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) holder.mGifImageVIew.getLayoutParams();
-                if(params.height == mRecyclerView.getHeight()) {
+                if (params.height == mRecyclerView.getHeight()) {
                     holder.singleView.resetLayoutParams();
                 } else {
-                    params.height =mRecyclerView.getHeight();
+                    params.height = mRecyclerView.getHeight();
                     holder.mGifImageVIew.setLayoutParams(params);
                 }
 
@@ -77,11 +91,17 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.mLikeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!holder.mLikeImageView.isSelected()) {
+                if (!holder.mLikeImageView.isSelected()) {
                     int count = Integer.parseInt(holder.mLikeCountTv.getText().toString());
                     count += 1;
                     holder.mLikeCountTv.setText(String.valueOf(count));
                     holder.mLikeImageView.setSelected(true);
+                    NetworkBus.getDefault().likeGifById(item.id, new NetworkBus.ILikeGifCallback() {
+                        @Override
+                        public void onSucessful(LikeResponse response) {
+                            LogUtil.v("fan", "like.:" + response.id + ":" + response.like_info);
+                        }
+                    });
                 }
             }
         });
@@ -96,19 +116,24 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.mSharedImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkBus.getDefault().deleteGifUrl(item.gif_url, new INetworkCallback() {
+                NetworkBus.getDefault().deleteGifById(item.id, new INetworkCallback() {
                     @Override
                     public void onResponse(GifResponse response) {
 
                     }
 
                     @Override
-                    public void onDeleteCompeletd(String gifUrl) {
+                    public void onDeleteCompeletd(int id) {
                         GifItem item = new GifItem();
-                        item.gif_url = gifUrl;
+                        item.id = id;
                         boolean result = mDataList.remove(item);
-                        LogUtil.v("fan","delete:" + result + ":" + gifUrl);
+                        LogUtil.v("fan", "delete:" + result + ":" + id);
                         notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onFailed() {
+
                     }
                 });
             }
