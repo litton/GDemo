@@ -10,8 +10,8 @@
         app:cardCornerRadius="3dip"
         app:cardElevation="2dip"
         app:cardBackgroundColor="#FCFCFC"
-        android:layout_marginLeft="15dip"
-        android:layout_marginRight="15dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
         android:layout_marginBottom="10dip"
         app:cardMaxElevation="@dimen/cardview_default_elevation"
         android:layout_height="wrap_content">
