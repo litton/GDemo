@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "25.0.0"
+    buildToolsVersion '25.0.1'
     defaultConfig {
         applicationId "com.fantasy.coolgif"
         minSdkVersion 16
@@ -11,10 +11,42 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    //签名 debug/release
+    signingConfigs {
+        debug {
+            storeFile file("/Users/fanlitao/.android/debug.keystore")
+        }
+        release {
+            storeFile file("fanlitao.keystore")
+            storePassword "fanlitao"
+            keyAlias "fanlitao"
+            keyPassword "fanlitao"
+        }
+    }
+
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            //Zipalign优化
+            zipAlignEnabled true
+            // 移除无用的resource文件
+//            shrinkResources true
+            //签名
+            signingConfig signingConfigs.release
+        }
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
+            def outputFile = output.outputFile
+            if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                def fileName = outputFile.name.replace(".apk", "-${defaultConfig.versionName}.apk").replace("app",
+                        "GifCool")
+                output.outputFile = new File(outputFile.parent, fileName)
+            }
         }
     }
 }

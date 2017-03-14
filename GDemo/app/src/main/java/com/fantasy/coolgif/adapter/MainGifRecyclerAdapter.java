@@ -63,9 +63,15 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.mFullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) holder.mGifImageVIew.getLayoutParams();
-                params.height =mRecyclerView.getHeight();
-                holder.mGifImageVIew.setLayoutParams(params);
+                if(params.height == mRecyclerView.getHeight()) {
+                    holder.singleView.resetLayoutParams();
+                } else {
+                    params.height =mRecyclerView.getHeight();
+                    holder.mGifImageVIew.setLayoutParams(params);
+                }
+
             }
         });
         holder.mLikeImageView.setOnClickListener(new View.OnClickListener() {

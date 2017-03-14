@@ -52,7 +52,15 @@
 #如果有引用v4包可以添加下面这行
 -keep public class * extends android.support.v4.app.Fragment
 
-
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet);
+}
+-keepclasseswithmembers class * {
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+}
 
 
 #忽略警告
@@ -69,7 +77,7 @@
 -printmapping mapping.txt
 
 
-
+-keep  class com.fantasy.coolgif.widget.* {*;}
 
 -dontwarn okhttp3.**
 -keep public class * implements com.bumptech.glide.module.GlideModule
@@ -78,5 +86,31 @@
   public *;
 }
 
+
 # for DexGuard only
--keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+#-keepresourcexmlelements manifest/application/meta-data@value=GlideModule
+
+-dontwarn javax.annotation.**
+-dontwarn javax.inject.**
+# OkHttp3
+-dontwarn okhttp3.logging.**
+-keep class okhttp3.internal.**{*;}
+-dontwarn okio.**
+# Retrofit
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+
+-keep class com.fantasy.coolgif.response.** {*;}
+#-keepattributes Signature-keepattributes Exceptions
+# RxJava RxAndroid
+#-dontwarn sun.misc.**
+#-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+#    long producerIndex;
+#    long consumerIndex;
+#}
+#-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+#    rx.internal.util.atomic.LinkedQueueNode producerNode;
+#}
+#-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+#    rx.internal.util.atomic.LinkedQueueNode consumerNode;
+#}

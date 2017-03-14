@@ -87,7 +87,7 @@ public class GIfSingleView extends LinearLayout {
         }
     }
 
-    private void resetLayoutParams() {
+    public void resetLayoutParams() {
         FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) mGifImageView.getLayoutParams();
         int height = getResources().getDimensionPixelOffset(R.dimen.gif_height);
         if (params.height > height) {
