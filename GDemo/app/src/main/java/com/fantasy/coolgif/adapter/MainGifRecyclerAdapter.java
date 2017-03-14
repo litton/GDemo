@@ -25,6 +25,7 @@ import com.fantasy.coolgif.R;
 import com.fantasy.coolgif.response.GifResponse;
 import com.fantasy.coolgif.response.LikeResponse;
 import com.fantasy.coolgif.utils.LogUtil;
+import com.fantasy.coolgif.utils.Utils;
 
 import java.util.List;
 
@@ -39,12 +40,15 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
     private Context mContext;
     private RequestManager imageLoader;
     private RecyclerView mRecyclerView;
+    private boolean isSuperAccount;
 
     public MainGifRecyclerAdapter(RecyclerView rv, List<GifItem> data) {
         mDataList = data;
         mContext = MainApplication.getInstance().getApplicationContext();
         imageLoader = Glide.with(MainApplication.getInstance().getApplicationContext());
         mRecyclerView = rv;
+
+       isSuperAccount =  Utils.isSuperAccount();
     }
 
 
@@ -92,14 +96,13 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
             @Override
             public void onClick(View v) {
                 if (!holder.mLikeImageView.isSelected()) {
-                    int count = Integer.parseInt(holder.mLikeCountTv.getText().toString());
-                    count += 1;
-                    holder.mLikeCountTv.setText(String.valueOf(count));
+
                     holder.mLikeImageView.setSelected(true);
                     NetworkBus.getDefault().likeGifById(item.id, new NetworkBus.ILikeGifCallback() {
                         @Override
                         public void onSucessful(LikeResponse response) {
                             LogUtil.v("fan", "like.:" + response.id + ":" + response.like_info);
+                            holder.mLikeCountTv.setText(String.valueOf(response.like_info));
                         }
                     });
                 }
@@ -116,26 +119,30 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.mSharedImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NetworkBus.getDefault().deleteGifById(item.id, new INetworkCallback() {
-                    @Override
-                    public void onResponse(GifResponse response) {
+                if (isSuperAccount) {
+                    NetworkBus.getDefault().deleteGifById(item.id, new INetworkCallback() {
+                        @Override
+                        public void onResponse(GifResponse response) {
 
-                    }
+                        }
 
-                    @Override
-                    public void onDeleteCompeletd(int id) {
-                        GifItem item = new GifItem();
-                        item.id = id;
-                        boolean result = mDataList.remove(item);
-                        LogUtil.v("fan", "delete:" + result + ":" + id);
-                        notifyDataSetChanged();
-                    }
+                        @Override
+                        public void onDeleteCompeletd(int id) {
+                            GifItem item = new GifItem();
+                            item.id = id;
+                            boolean result = mDataList.remove(item);
+                            LogUtil.v("fan", "delete:" + result + ":" + id);
+                            notifyDataSetChanged();
+                        }
 
-                    @Override
-                    public void onFailed() {
+                        @Override
+                        public void onFailed() {
 
-                    }
-                });
+                        }
+                    });
+                } else {
+
+                }
             }
         });
     }
