@@ -13,7 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
@@ -126,8 +128,8 @@ public class GIfSingleView extends LinearLayout {
                 }
             }
         };
-        imageLoader.load(gifItem.gif_url).asBitmap().
-                diskCacheStrategy(DiskCacheStrategy.SOURCE).thumbnail(0.1f).into(simpleTarget);
+        imageLoader.load(gifItem.gif_url).asBitmap().format(DecodeFormat.PREFER_RGB_565).
+                diskCacheStrategy(DiskCacheStrategy.ALL).thumbnail(0.01f).into(simpleTarget);
     }
 
     public void startGifAnimation() {
@@ -137,7 +139,7 @@ public class GIfSingleView extends LinearLayout {
             }
             mStartedPlayGIfAnimation = true;
             if (gifItem != null) {
-                imageLoader.load(gifItem.gif_url).diskCacheStrategy(DiskCacheStrategy.SOURCE).into(mGifImageView);
+                imageLoader.load(gifItem.gif_url).asGif().crossFade().priority(Priority.HIGH).diskCacheStrategy(DiskCacheStrategy.ALL).into(mGifImageView);
             }
         } catch (OutOfMemoryError error) {
             System.gc();

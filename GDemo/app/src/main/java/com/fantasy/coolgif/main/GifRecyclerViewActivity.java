@@ -1,15 +1,19 @@
 package com.fantasy.coolgif.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.fantasy.coolgif.adapter.MainGifRecyclerAdapter;
 import com.fantasy.coolgif.network.INetworkCallback;
 import com.fantasy.coolgif.network.NetworkBus;
+import com.fantasy.coolgif.response.GifItem;
 import com.fantasy.coolgif.response.GifResponse;
 import com.fantasy.coolgif.utils.LogUtil;
 import com.fantasy.coolgif.R;
@@ -22,7 +26,7 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.schedulers.Schedulers;
 
 
-public class GifRecyclerViewActivity extends AppCompatActivity implements INetworkCallback {
+public class GifRecyclerViewActivity extends AppCompatActivity implements INetworkCallback, View.OnClickListener {
 
 
     private RecyclerView mGifPager;
@@ -36,14 +40,20 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
     private boolean mWaitingResponse = false;
 
     private int mInitRequestPosition;
+    private int mLastSavePosition;
+
+    public static final boolean SUPPORT_PRELOAD_GIF = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycler_main);
+
+        findViewById(R.id.setting).setOnClickListener(this);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
         mInitRequestPosition = PreferenceUtil.getGifRequestPosition();
+        Glide.with(this).resumeRequests();
         NetworkBus.getDefault().getTopGifList(mInitRequestPosition, this);
         mWaitingResponse = true;
 
@@ -59,25 +69,47 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
                 super.onScrollStateChanged(recyclerView, newState);
                 switch (newState) {
                     case RecyclerView.SCROLL_STATE_IDLE:
+                        Glide.with(getApplicationContext()).resumeRequests();
+
+
+                        int newPos = mInitRequestPosition + mFirstVisiableItemPosition + 1;
+                        if (newPos < mLastSavePosition) {
+                            return;
+                        }
                         PreferenceUtil.saveGifCurrentPos(mInitRequestPosition + mFirstVisiableItemPosition + 1);
-                        GIfSingleView view = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition);
-                        if (view != null) {
-                            view.startGifAnimation();
+                        mLastSavePosition = mInitRequestPosition + mFirstVisiableItemPosition + 1;
+
+                        if (SUPPORT_PRELOAD_GIF) {
+                            GifItem item = mAdapter.getItemByPosition(mLastVisiableItemPosition + 1);
+                            if (item != null) {
+                                if (!GifRecyclerViewActivity.this.isFinishing()) {
+                                    Glide.with(GifRecyclerViewActivity.this).load(item.gif_url).downloadOnly(500, 500);
+                                }
+
+                            }
+
+                            GifItem item2 = mAdapter.getItemByPosition(mLastVisiableItemPosition + 2);
+                            if (item2 != null) {
+                                if (!GifRecyclerViewActivity.this.isFinishing()) {
+                                    Glide.with(GifRecyclerViewActivity.this).load(item2.gif_url).downloadOnly(500, 500);
+                                }
+                            }
+
                         }
-                        GIfSingleView view2 = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition + 1);
-                        if (view2 != null) {
-                            view2.startGifAnimation();
-                        }
-                        GIfSingleView view3 = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition + 2);
-                        if (view3 != null) {
-                            view3.startGifAnimation();
-                        }
+
+
                         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
                         int visibleItemCount = layoutManager.getChildCount();
                         int totalItemCount = layoutManager.getItemCount();
                         if (!mWaitingResponse && (visibleItemCount > 0 && (mLastVisiableItemPosition) >= totalItemCount - PRE_REQUERY_COUNT)) {
                             NetworkBus.getDefault().getTopGifList(totalItemCount + mInitRequestPosition, GifRecyclerViewActivity.this);
                         }
+                        break;
+                    case RecyclerView.SCROLL_STATE_DRAGGING:
+                        // Glide.with(getApplicationContext()).pauseRequests();
+                        break;
+                    case RecyclerView.SCROLL_STATE_SETTLING:
+                        Glide.with(getApplicationContext()).pauseRequests();
                         break;
                 }
             }
@@ -87,18 +119,7 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
                 super.onScrolled(recyclerView, dx, dy);
                 mFirstVisiableItemPosition = mLayoutManager.findFirstVisibleItemPosition();
                 mLastVisiableItemPosition = mLayoutManager.findLastVisibleItemPosition();
-                if (mFirstVisiableItemPosition == 0 && mGifPager.getChildAt(0).getTop() == 0) {
-                    GIfSingleView view = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition);
-                    if (view != null) {
-                        view.startGifAnimation();
-                    }
-
-                    GIfSingleView view2 = (GIfSingleView) mGifPager.findViewWithTag(mFirstVisiableItemPosition + 1);
-                    if (view2 != null) {
-                        view2.startGifAnimation();
-                    }
-
-                } else if (mGifPager.getChildAt(0).getTop() < 0) {
+                if (mGifPager.getChildAt(0).getTop() < 0) {
                     mFirstVisiableItemPosition = mFirstVisiableItemPosition + 1;
                 }
             }
@@ -162,5 +183,11 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
 
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        Intent intent = new Intent(this,SettingActivity.class);
+        startActivity(intent);
     }
 }

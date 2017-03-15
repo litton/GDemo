@@ -17,6 +17,7 @@ import com.bumptech.glide.load.engine.cache.InternalCacheDiskCacheFactory;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.fantasy.coolgif.blur.BlurFactory;
+import com.fantasy.coolgif.db.DBHelper;
 import com.fantasy.coolgif.main.MainApplication;
 import com.fantasy.coolgif.network.INetworkCallback;
 import com.fantasy.coolgif.network.NetworkBus;
@@ -42,19 +43,28 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
     private RecyclerView mRecyclerView;
     private boolean isSuperAccount;
 
+    private DBHelper mDBHelper;
+
     public MainGifRecyclerAdapter(RecyclerView rv, List<GifItem> data) {
         mDataList = data;
         mContext = MainApplication.getInstance().getApplicationContext();
         imageLoader = Glide.with(MainApplication.getInstance().getApplicationContext());
         mRecyclerView = rv;
-
        isSuperAccount =  Utils.isSuperAccount();
+        mDBHelper = new DBHelper(mContext);
     }
 
 
     public void addNewDataList(List<GifItem> dataList) {
         mDataList.addAll(dataList);
         notifyDataSetChanged();
+    }
+
+    public GifItem getItemByPosition(int position) {
+        if (position > -1 && position < mDataList.size()) {
+            return mDataList.get(position);
+        }
+        return null;
     }
 
 
@@ -71,7 +81,7 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.singleView.setTag(position);
         holder.singleView.resetForRecycler();
         holder.singleView.setGifItem(item);
-
+        holder.singleView.startGifAnimation();
         if (item.like_info > 0) {
             holder.mLikeCountTv.setVisibility(View.VISIBLE);
             holder.mLikeCountTv.setText(String.valueOf(item.like_info));
@@ -113,6 +123,8 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.mHeartImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean result = mDBHelper.saveClickHeartGif(item);
+                LogUtil.v("fan","insert sucessule:" + item.gif_title);
                 holder.mHeartImageView.setSelected(true);
             }
         });
