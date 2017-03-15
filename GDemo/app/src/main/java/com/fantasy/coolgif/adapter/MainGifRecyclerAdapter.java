@@ -122,6 +122,7 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
             public void onClick(View v) {
                 if (!holder.mLikeImageView.isSelected()) {
                     holder.mLikeImageView.setSelected(true);
+                    AnalyticsEvent.onEvent("like_gif_" + item.gif_url);
                     NetworkBus.getDefault().likeGifById(item.id, new NetworkBus.ILikeGifCallback() {
                         @Override
                         public void onSucessful(LikeResponse response) {
@@ -138,40 +139,53 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.mHeartImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean result = mDBHelper.saveClickHeartGif(item);
-                holder.mHeartImageView.setSelected(true);
-            }
-        });
-
-        holder.mSharedImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (isSuperAccount) {
-                    NetworkBus.getDefault().deleteGifById(item.id, new INetworkCallback() {
-                        @Override
-                        public void onResponse(GifResponse response) {
-
-                        }
-
-                        @Override
-                        public void onDeleteCompeletd(int id) {
-                            GifItem item = new GifItem();
-                            item.id = id;
-                            boolean result = mDataList.remove(item);
-                            LogUtil.v("fan", "delete:" + result + ":" + id);
-                            notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onFailed() {
-
-                        }
-                    });
+                if(holder.mHeartImageView.isSelected()) {
+                    holder.mHeartImageView.setSelected(false);
+                    mDBHelper.deleteHeartGif(item);
+                    AnalyticsEvent.onEvent("delete_heart_gif_" + item.gif_url);
                 } else {
+                    boolean result = mDBHelper.saveClickHeartGif(item);
 
+                    AnalyticsEvent.onEvent("heart_gif_" + item.gif_url);
+
+                    holder.mHeartImageView.setSelected(true);
                 }
+
             }
         });
+
+        if(isSuperAccount) {
+            holder.mSharedImageView.setVisibility(View.GONE);
+            holder.mSharedImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (isSuperAccount) {
+                        NetworkBus.getDefault().deleteGifById(item.id, new INetworkCallback() {
+                            @Override
+                            public void onResponse(GifResponse response) {
+
+                            }
+
+                            @Override
+                            public void onDeleteCompeletd(int id) {
+                                GifItem item = new GifItem();
+                                item.id = id;
+                                boolean result = mDataList.remove(item);
+                                notifyDataSetChanged();
+                            }
+
+                            @Override
+                            public void onFailed() {
+
+                            }
+                        });
+                    } else {
+
+                    }
+                }
+            });
+        }
+
     }
 
     @Override

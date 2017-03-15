@@ -32,7 +32,7 @@ public class DBHelper {
         try {
             db.execSQL("CREATE TABLE gif_heart (" +
                     "_ID INTEGER PRIMARY KEY autoincrement,"
-                    + "gif_title TEXT, gif_url varchar(255),like_info int"
+                    + "gif_title TEXT, gif_url varchar(512) not null UNIQUE ,like_info int"
                     + ");");
 
             db.execSQL("CREATE TABLE gif_like (" +
@@ -53,6 +53,30 @@ public class DBHelper {
         String sql = "";
         try {
             sql = "insert into gif_heart values(null,'" + item.gif_title + "','" + item.gif_url + "','" + item.like_info + "')";
+            db.execSQL(sql);
+            return true;
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean deleteHeartGif(GifItem item) {
+        String sql = "";
+        try {
+            sql = "DELETE FROM gif_heart WHERE gif_url = '" + item.gif_url + "'";
+            db.execSQL(sql);
+            return true;
+
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public boolean deleteLikeGIf(GifItem item) {
+        String sql = "";
+        try {
+            sql = "DELETE FROM gif_like WHERE gif_url = '" + item.gif_url + "'";
             db.execSQL(sql);
             return true;
 
@@ -115,7 +139,7 @@ public class DBHelper {
         if (cursor != null) {
             try {
 
-                while (cursor.moveToNext()){
+                while (cursor.moveToNext()) {
                     GifItem item = new GifItem();
                     item.gif_title = cursor.getString(0);
                     item.gif_url = cursor.getString(1);
@@ -139,7 +163,7 @@ public class DBHelper {
         if (cursor != null) {
             try {
 
-                while (cursor.moveToNext()){
+                while (cursor.moveToNext()) {
                     GifItem item = new GifItem();
                     item.gif_title = cursor.getString(0);
                     item.gif_url = cursor.getString(1);

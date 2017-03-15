@@ -111,6 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:scaleType="centerInside"
+                android:visibility="invisible"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="20dip"
                 android:src="@drawable/share_selector"

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="45dip">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/action_settings"
+            android:textColor="@android:color/white"
+            android:textSize="20dip" />
+
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#f4f4f4" />
+
+    <TextView
+        android:id="@+id/heart_gif"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:clickable="true"
+        android:gravity="center_vertical|left"
+        android:paddingLeft="15dip"
+        android:text="@string/heart_gif"
+        android:textColor="@android:color/white"
+        android:textSize="23dip" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#f4f4f4" />
+
+    <TextView
+        android:id="@+id/like_gif"
+        android:layout_width="match_parent"
+        android:layout_height="50dip"
+        android:clickable="true"
+        android:gravity="center_vertical|left"
+        android:paddingLeft="15dip"
+        android:text="@string/like_gif"
+        android:textColor="@android:color/white"
+        android:textSize="23dip" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dip"
+        android:background="#f4f4f4" />
+</LinearLayout>

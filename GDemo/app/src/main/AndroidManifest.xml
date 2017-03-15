@@ -19,10 +19,11 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
     <application
         android:name="com.fantasy.coolgif.main.MainApplication"
         android:allowBackup="true"
@@ -51,9 +52,12 @@
         </activity>
         <activity
             android:name=".main.SettingActivity"
-            android:label="@string/action_settings"
-           >
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/action_settings"></activity>
+
+        <activity android:name=".main.ViewGifsListActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            />
 
         <provider
             android:name=".db.GifProvider"
@@ -63,8 +67,12 @@
             android:name="com.bumptech.glide.integration.okhttp3.OkHttpGlideModule"
             android:value="GlideModule" />
 
-        <meta-data android:value="58c8dd97734be44807000ce8" android:name="UMENG_APPKEY"/>
-        <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="58c8dd97734be44807000ce8" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="${UMENG_CHANNEL_VALUE}" />
 
 
     </application>

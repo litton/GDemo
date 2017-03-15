@@ -133,7 +133,6 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
     public void onResponse(GifResponse response) {
         mWaitingResponse = false;
         if (mAdapter == null) {
-            LogUtil.v("fan", "onResponse:" + response);
             mAdapter = new MainGifRecyclerAdapter(mGifPager, response.data);
             mGifPager.setAdapter(mAdapter);
         } else {
