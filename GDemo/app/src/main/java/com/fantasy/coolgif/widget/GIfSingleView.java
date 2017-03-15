@@ -17,12 +17,17 @@ import com.bumptech.glide.Priority;
 import com.bumptech.glide.RequestManager;
 import com.bumptech.glide.load.DecodeFormat;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.gif.GifDrawable;
+import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.Target;
 import com.fantasy.coolgif.R;
 import com.fantasy.coolgif.blur.BlurFactory;
 import com.fantasy.coolgif.response.GifItem;
 import com.fantasy.coolgif.utils.LogUtil;
+
+import retrofit2.http.Url;
 
 /**
  * Created by fanlitao on 17/3/12.
@@ -139,7 +144,26 @@ public class GIfSingleView extends LinearLayout {
             }
             mStartedPlayGIfAnimation = true;
             if (gifItem != null) {
-                imageLoader.load(gifItem.gif_url).asGif().crossFade().priority(Priority.HIGH).diskCacheStrategy(DiskCacheStrategy.ALL).into(mGifImageView);
+                imageLoader.load(gifItem.gif_url).asGif().crossFade().priority(Priority.HIGH).listener(new RequestListener<String, GifDrawable>() {
+
+
+
+                    @Override
+                    public boolean onException(Exception e, String model, Target<GifDrawable> target, boolean isFirstResource) {
+                        LogUtil.v("fan","gif.onException:" + model);
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onResourceReady(GifDrawable resource, String model, Target<GifDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+
+                        if (!gifItem.gif_url.equals(model)) {
+                            LogUtil.v("fan","gif.onResourceReady.stop :" + model);
+                            resource.stop();
+                        }
+                        return false;
+                    }
+                }).diskCacheStrategy(DiskCacheStrategy.ALL).into(mGifImageView);
             }
         } catch (OutOfMemoryError error) {
             System.gc();

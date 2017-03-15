@@ -25,6 +25,7 @@ import com.fantasy.coolgif.response.GifItem;
 import com.fantasy.coolgif.R;
 import com.fantasy.coolgif.response.GifResponse;
 import com.fantasy.coolgif.response.LikeResponse;
+import com.fantasy.coolgif.utils.AnalyticsEvent;
 import com.fantasy.coolgif.utils.LogUtil;
 import com.fantasy.coolgif.utils.Utils;
 
@@ -50,7 +51,7 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         mContext = MainApplication.getInstance().getApplicationContext();
         imageLoader = Glide.with(MainApplication.getInstance().getApplicationContext());
         mRecyclerView = rv;
-       isSuperAccount =  Utils.isSuperAccount();
+        isSuperAccount = Utils.isSuperAccount();
         mDBHelper = new DBHelper(mContext);
     }
 
@@ -78,24 +79,38 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
     @Override
     public void onBindViewHolder(final GifItemViewHolder holder, int position) {
         final GifItem item = mDataList.get(position);
-        holder.singleView.setTag(position);
+        holder.singleView.setTag(item.gif_url);
         holder.singleView.resetForRecycler();
         holder.singleView.setGifItem(item);
         holder.singleView.startGifAnimation();
+
+        holder.mGifImageVIew.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AnalyticsEvent.onEvent("full_screen");
+                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) holder.mGifImageVIew.getLayoutParams();
+                if (params.height == mRecyclerView.getHeight()) {
+                    holder.singleView.resetLayoutParams();
+                }
+            }
+        });
         if (item.like_info > 0) {
             holder.mLikeCountTv.setVisibility(View.VISIBLE);
             holder.mLikeCountTv.setText(String.valueOf(item.like_info));
         } else {
             holder.mLikeCountTv.setVisibility(View.INVISIBLE);
         }
+        holder.mLikeImageView.setSelected(mDBHelper.isHLikeddGifItem(item));
+        holder.mHeartImageView.setSelected(mDBHelper.isHeartedGifItem(item));
         holder.mFullScreen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) holder.mGifImageVIew.getLayoutParams();
                 if (params.height == mRecyclerView.getHeight()) {
                     holder.singleView.resetLayoutParams();
+                    AnalyticsEvent.onEvent("btn_scale_screen");
                 } else {
+                    AnalyticsEvent.onEvent("btn_full_screen");
                     params.height = mRecyclerView.getHeight();
                     holder.mGifImageVIew.setLayoutParams(params);
                 }
@@ -124,7 +139,6 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
             @Override
             public void onClick(View v) {
                 boolean result = mDBHelper.saveClickHeartGif(item);
-                LogUtil.v("fan","insert sucessule:" + item.gif_title);
                 holder.mHeartImageView.setSelected(true);
             }
         });

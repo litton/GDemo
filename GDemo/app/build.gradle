@@ -25,7 +25,6 @@ android {
         }
     }
 
-
     buildTypes {
         release {
             minifyEnabled true
@@ -37,6 +36,17 @@ android {
             //签名
             signingConfig signingConfigs.release
         }
+    }
+
+    productFlavors {
+        xiaomi {}
+        _360 {}
+        baidu {}
+        wandoujia {}
+    }
+
+    productFlavors.all {
+        flavor -> flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
     }
 
     applicationVariants.all { variant ->
@@ -52,7 +62,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -66,6 +76,10 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'org.ligboy.retrofit2:converter-fastjson-android:2.1.0'
-    compile "io.reactivex.rxjava2:rxjava:2.0.1"
+    compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
+    compile 'io.reactivex.rxjava2:rxjava:2.0.1'
     testCompile 'junit:junit:4.12'
+    //compile 'com.umeng.analytics:analytics:latest.integration'
+    compile files('libs/umeng-analytics-v6.0.9.jar')
+    compile files('libs/utdid4all-1.0.4.jar')
 }

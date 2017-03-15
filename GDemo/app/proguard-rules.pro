@@ -101,6 +101,20 @@
 -keep class retrofit2.** { *; }
 
 -keep class com.fantasy.coolgif.response.** {*;}
+-keep public class * implements com.bumptech.glide.module.GlideModule
+-keepclassmembers class * {
+   public <init> (org.json.JSONObject);
+}
+
+-keep public class com.fantasy.coolgif.R$*{
+public static final int *;
+}
+
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
 #-keepattributes Signature-keepattributes Exceptions
 # RxJava RxAndroid
 #-dontwarn sun.misc.**

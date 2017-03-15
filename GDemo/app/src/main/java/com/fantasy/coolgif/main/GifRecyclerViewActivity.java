@@ -19,6 +19,7 @@ import com.fantasy.coolgif.utils.LogUtil;
 import com.fantasy.coolgif.R;
 import com.fantasy.coolgif.utils.PreferenceUtil;
 import com.fantasy.coolgif.widget.GIfSingleView;
+import com.umeng.analytics.MobclickAgent;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -49,6 +50,7 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.recycler_main);
 
+        MobclickAgent.setScenarioType(this,MobclickAgent.EScenarioType. E_UM_NORMAL);
         findViewById(R.id.setting).setOnClickListener(this);
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
@@ -137,6 +139,16 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
         } else {
             mAdapter.addNewDataList(response.data);
         }
+    }
+
+
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     @Override
