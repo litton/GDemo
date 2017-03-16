@@ -120,20 +120,32 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         holder.mLikeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!holder.mLikeImageView.isSelected()) {
-                    holder.mLikeImageView.setSelected(true);
-                    mDBHelper.saveLikeGif(item);
-                    AnalyticsEvent.onEvent("like_gif_" + item.gif_url);
+                if(isSuperAccount) {
                     NetworkBus.getDefault().likeGifById(item.id, new NetworkBus.ILikeGifCallback() {
                         @Override
                         public void onSucessful(LikeResponse response) {
-                            LogUtil.v("fan", "like.:" + response.id + ":" + response.like_info);
                             holder.mLikeCountTv.setText(String.valueOf(response.like_info));
                             holder.mLikeCountTv.setVisibility(View.VISIBLE);
                             item.like_info = response.like_info;
                         }
                     });
+                } else {
+                    if (!holder.mLikeImageView.isSelected()) {
+                        holder.mLikeImageView.setSelected(true);
+                        mDBHelper.saveLikeGif(item);
+                        AnalyticsEvent.onEvent("like_gif_" + item.gif_url);
+                        NetworkBus.getDefault().likeGifById(item.id, new NetworkBus.ILikeGifCallback() {
+                            @Override
+                            public void onSucessful(LikeResponse response) {
+                                LogUtil.v("fan", "like.:" + response.id + ":" + response.like_info);
+                                holder.mLikeCountTv.setText(String.valueOf(response.like_info));
+                                holder.mLikeCountTv.setVisibility(View.VISIBLE);
+                                item.like_info = response.like_info;
+                            }
+                        });
+                    }
                 }
+
             }
         });
 
