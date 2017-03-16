@@ -40,8 +40,7 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/full_screen"
                     android:layout_gravity="right|bottom"
-                    android:paddingBottom="10dip"
-                    android:paddingRight="10dip"
+                    android:padding="10dip"
                     />
 
                 <ImageView
