@@ -56,4 +56,27 @@
         android:layout_width="match_parent"
         android:layout_height="1dip"
         android:background="#f4f4f4" />
+<LinearLayout
+    android:id="@+id/set_pos"
+    android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:orientation="horizontal">
+
+    <EditText
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:id="@+id/pos"
+        android:layout_weight="1"
+        />
+    <Button
+        android:layout_width="0dip"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:id="@+id/confirm"
+        android:text="确认修改"
+        android:layout_weight="1"
+        />
+
+</LinearLayout>
 </LinearLayout>
