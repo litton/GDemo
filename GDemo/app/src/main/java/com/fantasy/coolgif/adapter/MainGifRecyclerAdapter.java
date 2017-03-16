@@ -122,6 +122,7 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
             public void onClick(View v) {
                 if (!holder.mLikeImageView.isSelected()) {
                     holder.mLikeImageView.setSelected(true);
+                    mDBHelper.saveLikeGif(item);
                     AnalyticsEvent.onEvent("like_gif_" + item.gif_url);
                     NetworkBus.getDefault().likeGifById(item.id, new NetworkBus.ILikeGifCallback() {
                         @Override
@@ -155,7 +156,7 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
         });
 
         if(isSuperAccount) {
-            holder.mSharedImageView.setVisibility(View.GONE);
+            holder.mSharedImageView.setVisibility(View.VISIBLE);
             holder.mSharedImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -39,9 +39,7 @@ android {
     }
 
     productFlavors {
-        xiaomi {}
-        _360 {}
-        baidu {}
+        qq {}
         wandoujia {}
     }
 

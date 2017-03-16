@@ -55,7 +55,6 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
         mInitRequestPosition = PreferenceUtil.getGifRequestPosition();
-        Glide.with(this).resumeRequests();
         NetworkBus.getDefault().getTopGifList(mInitRequestPosition, this);
         mWaitingResponse = true;
 
@@ -111,7 +110,7 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
                         // Glide.with(getApplicationContext()).pauseRequests();
                         break;
                     case RecyclerView.SCROLL_STATE_SETTLING:
-                        Glide.with(getApplicationContext()).pauseRequests();
+                        //Glide.with(getApplicationContext()).pauseRequests();
                         break;
                 }
             }
@@ -182,15 +181,14 @@ public class GifRecyclerViewActivity extends AppCompatActivity implements INetwo
     protected void onDestroy() {
 
 
-        LogUtil.v("fan", "onDestory:" + PreferenceUtil.getGifRequestPosition());
         clearMemoryCache(GifRecyclerViewActivity.this);
-        Observable.create(new ObservableOnSubscribe<String>() {
-            @Override
-            public void subscribe(ObservableEmitter<String> e) throws Exception {
-
-                //clearDiskCache(MainActivity.this);
-            }
-        }).subscribeOn(Schedulers.io()).subscribe();
+//        Observable.create(new ObservableOnSubscribe<String>() {
+//            @Override
+//            public void subscribe(ObservableEmitter<String> e) throws Exception {
+//
+//                //clearDiskCache(MainActivity.this);
+//            }
+//        }).subscribeOn(Schedulers.io()).subscribe();
 
 
         super.onDestroy();
