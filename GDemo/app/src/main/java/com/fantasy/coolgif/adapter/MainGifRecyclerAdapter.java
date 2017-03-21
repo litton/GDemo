@@ -62,9 +62,12 @@ public class MainGifRecyclerAdapter extends RecyclerView.Adapter<GifItemViewHold
     }
 
     public GifItem getItemByPosition(int position) {
-        if (position > -1 && position < mDataList.size()) {
-            return mDataList.get(position);
+        if (mDataList != null) {
+            if (position > -1 && position < mDataList.size()) {
+                return mDataList.get(position);
+            }
         }
+
         return null;
     }
 

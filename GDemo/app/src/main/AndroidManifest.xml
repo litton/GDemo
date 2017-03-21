@@ -58,7 +58,7 @@
         <activity android:name=".main.ViewGifsListActivity"
             android:theme="@style/AppTheme.NoActionBar"
             />
-
+        <activity android:name=".main.CreateAnimatGifActivity" />
         <provider
             android:name=".db.GifProvider"
             android:authorities="com.fantasy.coolgif.provider" />

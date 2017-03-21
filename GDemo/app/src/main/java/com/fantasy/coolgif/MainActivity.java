@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements INetworkCallback 
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
-        NetworkBus.getDefault().getTopGifList(this);
+       // NetworkBus.getDefault().getTopGifList(this);
 
 
         mGifPager = (ViewPager) findViewById(R.id.list);

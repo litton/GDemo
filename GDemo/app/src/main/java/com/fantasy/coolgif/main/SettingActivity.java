@@ -60,7 +60,7 @@ public class SettingActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         Intent intent = null;
         if (v.getId() == R.id.heart_gif) {
-            intent = new Intent(this, ViewGifsListActivity.class);
+            intent = new Intent(this, CreateAnimatGifActivity.class);
             intent.putExtra(ViewGifsListActivity.ACTION_TYPE, ViewGifsListActivity.ACTION_HEART_TYPE);
         } else {
             intent = new Intent(this, ViewGifsListActivity.class);

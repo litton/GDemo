@@ -38,9 +38,9 @@ public class ViewGifsListActivity extends AppCompatActivity {
         setContentView(R.layout.recycler_main);
 
         MobclickAgent.setScenarioType(this, MobclickAgent.EScenarioType.E_UM_NORMAL);
-        findViewById(R.id.setting).setVisibility(View.GONE);
+       // findViewById(R.id.setting).setVisibility(View.GONE);
         Glide.with(this).resumeRequests();
-        TextView titleView = (TextView) findViewById(R.id.title_string);
+      //  TextView titleView = (TextView) findViewById(R.id.title_string);
         mGifPager = (RecyclerView) findViewById(R.id.list);
         mGifPager.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL,
@@ -74,11 +74,11 @@ public class ViewGifsListActivity extends AppCompatActivity {
         List<GifItem> dataList = null;
         if (actionType == ACTION_LIKE_TYPE) {
             dataList = dbHelper.getAllLikedGIfList();
-            titleView.setText(R.string.like_gif);
+          //  titleView.setText(R.string.like_gif);
 
         } else {
             dataList = dbHelper.getAllHeartedGifList();
-            titleView.setText(R.string.heart_gif);
+          //  titleView.setText(R.string.heart_gif);
         }
 
 

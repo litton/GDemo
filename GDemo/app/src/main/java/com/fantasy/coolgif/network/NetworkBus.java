@@ -98,34 +98,31 @@ public class NetworkBus {
 //        });
 //    }
 
-    public void getTopGifList(final INetworkCallback callback) {
-        final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
-
-        final Call<GifResponse> call = repo.getTopGifList();
-        call.enqueue(new Callback<GifResponse>() {
-            @Override
-            public void onResponse(Call<GifResponse> call, Response<GifResponse> response) {
-                Log.v("fan", "onResponse:" + response);
-                if (response.isSuccessful()) {
-                    callback.onResponse(response.body());
-                } else {
-                    callback.onFailed();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<GifResponse> call, Throwable t) {
-                Log.v("fan", "onFailure" + call.toString());
-                t.printStackTrace();
-            }
-        });
-    }
+//    public void getTopGifList(final INetworkCallback callback) {
+//        final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
+//
+//        final Call<GifResponse> call = repo.getTopGifList();
+//        call.enqueue(new Callback<GifResponse>() {
+//            @Override
+//            public void onResponse(Call<GifResponse> call, Response<GifResponse> response) {
+//                Log.v("fan", "onResponse:" + response);
+//                if (response.isSuccessful()) {
+//                    callback.onResponse(response.body());
+//                } else {
+//                    callback.onFailed();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<GifResponse> call, Throwable t) {
+//                Log.v("fan", "onFailure" + call.request().url());
+//                t.printStackTrace();
+//            }
+//        });
+//    }
 
     public void getTopGifList(int pos, final INetworkCallback callback) {
-
-
         final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
-
         final Call<GifResponse> call = repo.getTopGifList(pos);
         call.enqueue(new Callback<GifResponse>() {
             @Override
@@ -138,7 +135,30 @@ public class NetworkBus {
 
             @Override
             public void onFailure(Call<GifResponse> call, Throwable t) {
-                Log.v("fan", "onFailure" + call.toString());
+                Log.v("fan", "onFailure" + call.request().url());
+                t.printStackTrace();
+                if (callback != null) {
+                    callback.onFailed();
+                }
+            }
+        });
+    }
+
+    public void getMovieGifList(int pos, final INetworkCallback callback) {
+        final CoolGifAPI repo = mRetrofit.create(CoolGifAPI.class);
+        final Call<GifResponse> call = repo.getMovieGifList(pos);
+        call.enqueue(new Callback<GifResponse>() {
+            @Override
+            public void onResponse(Call<GifResponse> call, Response<GifResponse> response) {
+                Log.v("fan", "onResponse:" + response);
+                if (response.isSuccessful()) {
+                    callback.onResponse(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<GifResponse> call, Throwable t) {
+                Log.v("fan", "onFailure" + call.request().url());
                 t.printStackTrace();
                 if (callback != null) {
                     callback.onFailed();
@@ -199,8 +219,8 @@ public class NetworkBus {
     public interface CoolGifAPI {
         // @GET("{category_id}/category/{json_id}.json")
         //Call<ResponseBody> getImageList(@Path("category_id") String categoryId, @Path("json_id") String jsonId);
-        @GET("gif_main.json")
-        Call<GifResponse> getTopGifList();
+//        @GET("gif_main.json")
+//        Call<GifResponse> getTopGifList();
 
         @GET("get_gif")
         Call<GifResponse> getTopGifList(@Query("pos") int pos);
@@ -210,6 +230,9 @@ public class NetworkBus {
 
         @GET("like")
         Call<LikeResponse> likeGifById(@Query("id") int gifId);
+
+        @GET("gif_movie.php")
+        Call<GifResponse> getMovieGifList(@Query("pos") int pos);
 
 
     }
